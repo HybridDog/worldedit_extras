@@ -1,3 +1,6 @@
+local load_time_start = os.clock()
+
+
 worldedit.node_is_valid = worldedit.node_is_valid or function(nodename)
 	return minetest.registered_nodes[nodename] ~= nil
 	or minetest.registered_nodes["default:" .. nodename] ~= nil
@@ -112,3 +115,12 @@ minetest.register_chatcommand("/lit", {
 		minetest.chat_send_player(name, worldedit.lit_bombs(pos1, pos2, name) .. " bombs lit")
 	end,
 })
+
+
+local time = math.floor(tonumber(os.clock()-load_time_start)*100+0.5)/100
+local msg = "[worldedit_extras] loaded after ca. "..time
+if time > 0.05 then
+	print(msg)
+else
+	minetest.log("info", msg)
+end
