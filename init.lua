@@ -1,38 +1,33 @@
 local load_time_start = os.clock()
 
-
 worldedit.node_is_valid = worldedit.node_is_valid or function(nodename)
-	return minetest.registered_nodes[nodename] ~= nil
-	or minetest.registered_nodes["default:" .. nodename] ~= nil
+	return minetest.registered_nodes[nodename]
+	or minetest.registered_nodes["default:" .. nodename]
 end
 
+local random = math.random
 worldedit.rr = function(pos1, pos2, searchnode, replacenode, zahl)
 	local pos1, pos2 = worldedit.sort_pos(pos1, pos2)
-	local env = minetest.env
 
-	if minetest.registered_nodes[searchnode] == nil then
+	if not minetest.registered_nodes[searchnode] then
 		searchnode = "default:" .. searchnode
 	end
 
-	local pos = {x=pos1.x, y=0, z=0}
 	local node = {name=replacenode}
+
 	local count = 0
-	while pos.x <= pos2.x do
-		pos.y = pos1.y
-		while pos.y <= pos2.y do
-			pos.z = pos1.z
-			while pos.z <= pos2.z do
-				if env:get_node(pos).name == searchnode then
-					if math.random(1,zahl) == 1 then
-						env:add_node(pos, node)
-						count = count + 1
+	for z = pos1.z, pos2.z do
+		for y = pos1.y, pos2.y do
+			for x = pos1.x, pos2.x do
+				if random(1, zahl) == 1 then
+					local pos = {x=x,y=y,z=z}
+					if minetest.get_node(pos).name == searchnode then
+						minetest.set_node(pos, node)
+						count = count+1
 					end
 				end
-				pos.z = pos.z + 1
 			end
-			pos.y = pos.y + 1
 		end
-		pos.x = pos.x + 1
 	end
 	return count
 end
